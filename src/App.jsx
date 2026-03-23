@@ -103,13 +103,13 @@ function TileForm({ tile, setTile, onSave, onCancel, saveLabel, th }) {
             </div>
           </div>
           <label className="flex items-center gap-3 py-2 cursor-pointer select-none">
-            <div className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${tile.showUrl ? "bg-blue-600 border-blue-600" : "border-gray-400 bg-transparent"}`} onClick={() => setTile({ ...tile, showUrl: !tile.showUrl })}>
+            <div className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${tile.showUrl ? 'bg-blue-600 border-blue-600' : 'border-gray-400 bg-transparent'}`} onClick={() => setTile({ ...tile, showUrl: !tile.showUrl })}>
               {tile.showUrl && <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
             </div>
             <span className={`text-sm font-medium ${th.text}`}>URL anzeigen</span>
           </label>
           <label className="flex items-center gap-3 py-2 cursor-pointer select-none">
-            <div className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${tile.newTab ? "bg-blue-600 border-blue-600" : "border-gray-400 bg-transparent"}`} onClick={() => setTile({ ...tile, newTab: !tile.newTab })}>
+            <div className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${tile.newTab ? 'bg-blue-600 border-blue-600' : 'border-gray-400 bg-transparent'}`} onClick={() => setTile({ ...tile, newTab: !tile.newTab })}>
               {tile.newTab && <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
             </div>
             <span className={`text-sm font-medium ${th.text}`}>In neuem Tab öffnen</span>
@@ -125,10 +125,15 @@ function TileForm({ tile, setTile, onSave, onCancel, saveLabel, th }) {
 }
 
 function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSettings, setEditingTile, deleteTile, th }) {
-  const dragStart = (e) => { e.dataTransfer.setData("tileIndex", index) }
-  const dragOver = (e) => { e.preventDefault() }
+  const [isDragOver, setIsDragOver] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const dragStart = (e) => { e.dataTransfer.setData("tileIndex", index); setIsDragging(true) }
+  const dragEnd = () => setIsDragging(false)
+  const dragOver = (e) => { e.preventDefault(); setIsDragOver(true) }
+  const dragLeave = () => setIsDragOver(false)
   const drop = (e) => {
     e.preventDefault()
+    setIsDragOver(false)
     const from = parseInt(e.dataTransfer.getData("tileIndex"))
     if (from !== index) moveTile(from, index)
   }
@@ -139,10 +144,12 @@ function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSetting
       rel="noopener noreferrer"
       draggable
       onDragStart={dragStart}
+      onDragEnd={dragEnd}
       onDragOver={dragOver}
+      onDragLeave={dragLeave}
       onDrop={drop}
       onClick={e => { if (showSettings) e.preventDefault() }}
-      className={`${sizeClasses[tile.size]} relative group rounded-2xl overflow-hidden flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-grab active:cursor-grabbing active:scale-95 active:opacity-70`}
+      className={`${sizeClasses[tile.size]} relative group rounded-2xl overflow-hidden flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-40 scale-95' : ''} ${isDragOver ? 'scale-105 ring-4 ring-blue-400 ring-opacity-80' : ''}`}
       style={{
         background: isDark ? `linear-gradient(135deg, ${tile.color}, ${tile.color}cc)` : "#ffffff",
         border: isDark ? `1px solid rgba(255,255,255,0.1)` : `2px solid ${tile.color}`,
@@ -169,7 +176,7 @@ function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSetting
 }
 
 export default function LinkDashboard() {
-  const [themeMode, setThemeMode] = useState(() => localStorage.getItem("rp-theme") || "auto")
+  const [themeMode, setThemeMode] = useState(() => localStorage.getItem("rp-theme") || "dark")
   const [isDark, setIsDark] = useState(true)
   const [showThemeMenu, setShowThemeMenu] = useState(false)
   const [showSettingsMenu, setShowSettingsMenu] = useState(false)
@@ -262,7 +269,9 @@ export default function LinkDashboard() {
             setTiles(imported)
             setShowSettingsMenu(false)
           }
-        } else { alert("Ungültige Datei – keine Kacheln gefunden.") }
+        } else {
+          alert("Ungültige Datei – keine Kacheln gefunden.")
+        }
       } catch { alert("Fehler beim Lesen der Datei.") }
     }
     reader.readAsText(file)
@@ -288,7 +297,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 1.2</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 1.3</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -354,7 +363,18 @@ export default function LinkDashboard() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredTiles.map((tile, index) => (
-              <DraggableTile key={tile.id} tile={tile} index={index} moveTile={moveTile} isDark={isDark} sizeClasses={sizeClasses} showSettings={showSettings} setEditingTile={setEditingTile} deleteTile={deleteTile} th={th} />
+              <DraggableTile
+                key={tile.id}
+                tile={tile}
+                index={index}
+                moveTile={moveTile}
+                isDark={isDark}
+                sizeClasses={sizeClasses}
+                showSettings={showSettings}
+                setEditingTile={setEditingTile}
+                deleteTile={deleteTile}
+                th={th}
+              />
             ))}
           </div>
         )}
