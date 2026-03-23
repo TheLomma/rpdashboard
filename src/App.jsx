@@ -325,6 +325,8 @@ export default function LinkDashboard() {
     e.target.value = ""
   }
 
+  const [showHelp, setShowHelp] = useState(false)
+
   const closeMenus = () => { setShowThemeMenu(false); setShowSettingsMenu(false) }
 
   const ThemeIcon = () => {
@@ -344,7 +346,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 1.7</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 1.8</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -354,6 +356,7 @@ export default function LinkDashboard() {
               <span className="absolute left-3 top-2.5 text-gray-500">🔍</span>
             </div>
             )}
+            <button className={`p-2.5 rounded-xl transition-colors border text-sm ${showSettings ? 'bg-blue-600 border-blue-600 text-white' : th.btn}`} title={showSettings ? 'Bearbeiten beenden' : 'Kacheln bearbeiten'} onClick={e => { e.stopPropagation(); setShowSettings(!showSettings); setShowSettingsMenu(false) }}>✏️</button>
             <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-colors flex items-center gap-2 shadow-lg" onClick={e => { e.stopPropagation(); setShowAdd(true) }}>
               <span className="text-lg leading-none">+</span> Neue Kachel
             </button>
@@ -388,9 +391,7 @@ export default function LinkDashboard() {
                       </div>
                       <span>📋</span> Listenansicht
                     </label>
-                    <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${showSettings ? th.themeActiveBg : th.themeInactiveBg}`} onClick={() => { setShowSettings(!showSettings); setShowSettingsMenu(false) }}>
-                      <span>✏️</span> {showSettings ? "Bearbeiten beenden" : "Kacheln bearbeiten"}
-                    </button>
+
                     <div className={`my-1 border-t ${th.divider}`} />
                     <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} onClick={exportTiles}>
                       <span>📤</span> Kacheln exportieren
@@ -399,6 +400,9 @@ export default function LinkDashboard() {
                       <span>📥</span> Kacheln importieren
                       <input type="file" accept=".json" className="hidden" onChange={importTiles} />
                     </label>
+                    <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} onClick={() => { setShowHelp(true); setShowSettingsMenu(false) }}>
+                      <span>❓</span> Anleitung & Tutorial
+                    </button>
                     <div className={`my-1 border-t ${th.divider}`} />
                     <button className="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors text-yellow-500 hover:bg-yellow-500 hover:bg-opacity-10" onClick={() => { localStorage.clear(); window.location.reload() }}>
                       <span>🗑️</span> Cache leeren & neu laden
@@ -502,6 +506,39 @@ export default function LinkDashboard() {
           <button className="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 rounded-lg transition-colors" onClick={confirmDelete}>Löschen</button>
           <button className={`flex-1 font-medium py-2.5 rounded-lg transition-colors border ${th.btn}`} onClick={() => setConfirmDeleteId(null)}>Abbrechen</button>
         </div>
+      </div>
+    </div>
+  )}
+  {showHelp && (
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" onClick={() => setShowHelp(false)}>
+      <div className={`rounded-2xl w-full max-w-lg border shadow-2xl overflow-hidden ${th.modal}`} onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
+          <h3 className={`text-lg font-bold flex items-center gap-2 ${th.text}`}>❓ Anleitung & Tutorial</h3>
+          <button className={`p-1.5 rounded-lg transition-colors border ${th.btn}`} onClick={() => setShowHelp(false)}>✕</button>
+        </div>
+        <div className="overflow-y-auto max-h-[70vh] px-6 py-4 space-y-5">
+          {[
+            { icon: '➕', title: 'Kachel hinzufügen', text: 'Klicke oben rechts auf "+ Neue Kachel". Gib Titel, URL, Icon und Farbe ein und bestätige mit "Hinzufügen".' },
+            { icon: '✏️', title: 'Kachel bearbeiten', text: 'Aktiviere den Bearbeitungsmodus über ⚙️ → "Kacheln bearbeiten". Dann erscheint auf jeder Kachel ein ✏️-Button.' },
+            { icon: '🗑️', title: 'Kachel löschen', text: 'Im Bearbeitungsmodus auf 🗑️ klicken. Es erscheint eine Sicherheitsabfrage bevor die Kachel gelöscht wird.' },
+            { icon: '↕️', title: 'Drag & Drop', text: 'Im Bearbeitungsmodus kannst du Kacheln per Drag & Drop verschieben. Die Ziel-Kachel leuchtet blau auf.' },
+            { icon: '⭐', title: 'Favoriten', text: 'Im Bearbeitungsmodus auf ⭐ klicken, um eine Kachel als Favorit zu markieren. Favoriten erscheinen immer ganz oben.' },
+            { icon: '🔍', title: 'Suchfeld', text: 'Das Suchfeld kann über ⚙️ → Checkbox "Suchfeld anzeigen" ein- oder ausgeblendet werden.' },
+            { icon: '📋', title: 'Listenansicht', text: 'Über ⚙️ → Checkbox "Listenansicht" kannst du zwischen Kachel- und kompakter Listenansicht wechseln.' },
+            { icon: '🌐', title: 'Favicon als Icon', text: 'Im Kachel-Formular auf "🌐 Favicon" klicken, um das Logo der Website automatisch als Icon zu laden.' },
+            { icon: '📤', title: 'Export & Import', text: 'Über ⚙️ kannst du alle Kacheln als JSON-Datei exportieren und auf einem anderen Gerät wieder importieren.' },
+            { icon: '🌙', title: 'Theme wechseln', text: 'Über den 🌙-Button oben rechts kannst du zwischen Dunkel, Hell und Automatisch (Systemeinstellung) wechseln.' },
+          ].map(item => (
+            <div key={item.title} className={`flex gap-3 p-3 rounded-xl ${th.themeInactiveBg}`}>
+              <span className="text-2xl flex-shrink-0">{item.icon}</span>
+              <div>
+                <p className={`font-semibold text-sm mb-0.5 ${th.text}`}>{item.title}</p>
+                <p className={`text-xs leading-relaxed ${th.label}`}>{item.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 1.8 • RHEINISCHE ROST Dashboard</div>
       </div>
     </div>
   )}
