@@ -219,7 +219,10 @@ export default function LinkDashboard() {
   const addTile = () => {
     if (!newTile.title || !newTile.url) return
     const url = newTile.url.startsWith("http") ? newTile.url : "https://" + newTile.url
-    setTiles([...tiles, { ...newTile, url, id: Date.now() }])
+    const newId = Date.now()
+    setTiles([...tiles, { ...newTile, url, id: newId }])
+    setAddingId(newId)
+    setTimeout(() => setAddingId(null), 400)
     setNewTile({ title: "", url: "", color: "#4285F4", size: "medium", newTab: true, icon: "🔗", showUrl: false })
     setShowAdd(false)
   }
@@ -230,7 +233,23 @@ export default function LinkDashboard() {
     setEditingTile(null)
   }
 
-  const deleteTile = (id) => setTiles(tiles.filter(t => t.id !== id))
+  const [removingId, setRemovingId] = useState(null)
+  const [addingId, setAddingId] = useState(null)
+
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null)
+
+  const deleteTile = (id) => {
+    setConfirmDeleteId(id)
+  }
+
+  const confirmDelete = () => {
+    setRemovingId(confirmDeleteId)
+    setConfirmDeleteId(null)
+    setTimeout(() => {
+      setTiles(tiles.filter(t => t.id !== confirmDeleteId))
+      setRemovingId(null)
+    }, 300)
+  }
 
   const moveTile = (from, to) => {
     const updated = [...tiles]
@@ -238,6 +257,12 @@ export default function LinkDashboard() {
     updated.splice(to, 0, moved)
     setTiles(updated)
   }
+
+  const [showSearch, setShowSearch] = useState(() => localStorage.getItem("rp-show-search") !== "false")
+
+  useEffect(() => {
+    localStorage.setItem("rp-show-search", showSearch)
+  }, [showSearch])
 
   const resetTiles = () => {
     if (window.confirm("Alle Kacheln auf Standard zurücksetzen?")) {
@@ -297,14 +322,16 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 1.4</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 1.6</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
+            {showSearch && (
             <div className="relative">
               <input className={`text-sm rounded-xl pl-10 pr-4 py-2.5 w-48 border focus:border-blue-500 focus:outline-none transition-all ${th.input}`} placeholder="Suchen…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} onClick={e => e.stopPropagation()} />
               <span className="absolute left-3 top-2.5 text-gray-500">🔍</span>
             </div>
+            )}
             <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-colors flex items-center gap-2 shadow-lg" onClick={e => { e.stopPropagation(); setShowAdd(true) }}>
               <span className="text-lg leading-none">+</span> Neue Kachel
             </button>
@@ -327,6 +354,12 @@ export default function LinkDashboard() {
               {showSettingsMenu && (
                 <div className={`absolute right-0 mt-2 w-60 rounded-xl shadow-2xl border overflow-hidden z-50 ${th.panelBg}`}>
                   <div className="p-2 space-y-1">
+                    <label className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors cursor-pointer ${th.themeInactiveBg}`} onClick={e => e.stopPropagation()}>
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${showSearch ? 'bg-blue-600 border-blue-600' : 'border-gray-400 bg-transparent'}`} onClick={() => { setShowSearch(!showSearch); if (showSearch) setSearchQuery("") }}>
+                        {showSearch && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                      </div>
+                      <span>🔍</span> Suchfeld anzeigen
+                    </label>
                     <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${showSettings ? th.themeActiveBg : th.themeInactiveBg}`} onClick={() => { setShowSettings(!showSettings); setShowSettingsMenu(false) }}>
                       <span>✏️</span> {showSettings ? "Bearbeiten beenden" : "Kacheln bearbeiten"}
                     </button>
@@ -363,23 +396,44 @@ export default function LinkDashboard() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredTiles.map((tile, index) => (
-              <DraggableTile
+              <div
                 key={tile.id}
-                tile={tile}
-                index={index}
-                moveTile={moveTile}
-                isDark={isDark}
-                sizeClasses={sizeClasses}
-                showSettings={showSettings}
-                setEditingTile={setEditingTile}
-                deleteTile={deleteTile}
-                th={th}
-              />
+                style={{
+                  transition: 'opacity 0.3s ease, transform 0.3s ease',
+                  opacity: removingId === tile.id ? 0 : addingId === tile.id ? 0 : 1,
+                  transform: removingId === tile.id ? 'scale(0.8)' : addingId === tile.id ? 'scale(0.8)' : 'scale(1)',
+                }}
+              >
+                <DraggableTile
+                  tile={tile}
+                  index={index}
+                  moveTile={moveTile}
+                  isDark={isDark}
+                  sizeClasses={sizeClasses}
+                  showSettings={showSettings}
+                  setEditingTile={setEditingTile}
+                  deleteTile={deleteTile}
+                  th={th}
+                />
+              </div>
             ))}
           </div>
         )}
       </main>
-      {showAdd && <TileForm tile={newTile} setTile={setNewTile} onSave={addTile} onCancel={() => setShowAdd(false)} saveLabel="Hinzufügen" th={th} />}
+      {confirmDeleteId && (
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" onClick={() => setConfirmDeleteId(null)}>
+      <div className={`rounded-2xl p-6 w-full max-w-sm border shadow-2xl ${th.modal}`} onClick={e => e.stopPropagation()}>
+        <p className="text-4xl text-center mb-3">🗑️</p>
+        <h3 className={`text-lg font-bold text-center mb-2 ${th.text}`}>Kachel löschen?</h3>
+        <p className={`text-sm text-center mb-6 ${th.label}`}>"{tiles.find(t => t.id === confirmDeleteId)?.title}" wird unwiderruflich gelöscht.</p>
+        <div className="flex gap-3">
+          <button className="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 rounded-lg transition-colors" onClick={confirmDelete}>Löschen</button>
+          <button className={`flex-1 font-medium py-2.5 rounded-lg transition-colors border ${th.btn}`} onClick={() => setConfirmDeleteId(null)}>Abbrechen</button>
+        </div>
+      </div>
+    </div>
+  )}
+  {showAdd && <TileForm tile={newTile} setTile={setNewTile} onSave={addTile} onCancel={() => setShowAdd(false)} saveLabel="Hinzufügen" th={th} />}
       {editingTile && <TileForm tile={editingTile} setTile={setEditingTile} onSave={updateTile} onCancel={() => setEditingTile(null)} saveLabel="Speichern" th={th} />}
       <footer className={`text-center py-6 text-xs ${th.footer}`}>{tiles.length} Kacheln • Dashboard</footer>
     </div>
