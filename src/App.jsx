@@ -134,7 +134,7 @@ function TileForm({ tile, setTile, onSave, onCancel, saveLabel, th }) {
   )
 }
 
-function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSettings, setEditingTile, deleteTile, toggleFavorite, th }) {
+function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSettings, setEditingTile, deleteTile, toggleFavorite, updateTileColor, th }) {
   const [isDragOver, setIsDragOver] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const dragStart = (e) => { e.dataTransfer.setData("tileIndex", index); setIsDragging(true) }
@@ -177,6 +177,7 @@ function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSetting
       {showSettings && (
         <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center gap-2 z-10">
           <button className={`p-2 rounded-lg text-sm transition-colors ${tile.favorite ? 'bg-yellow-400 bg-opacity-90 hover:bg-opacity-100' : 'bg-white bg-opacity-20 hover:bg-opacity-40'} text-white`} onClick={e => { e.preventDefault(); toggleFavorite(tile.id) }} title={tile.favorite ? 'Favorit entfernen' : 'Als Favorit markieren'}>⭐</button>
+          <label className="bg-white bg-opacity-20 hover:bg-opacity-40 text-white p-2 rounded-lg text-sm cursor-pointer flex items-center justify-center" title="Farbe ändern" onClick={e => e.stopPropagation()}>🎨<input type="color" className="w-0 h-0 opacity-0 absolute" value={tile.color} onChange={e => updateTileColor(tile.id, e.target.value)} /></label>
           <button className="bg-white bg-opacity-20 hover:bg-opacity-40 text-white p-2 rounded-lg text-sm" onClick={e => { e.preventDefault(); setEditingTile({ ...tile }) }}>✏️</button>
           <button className="bg-red-600 bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-lg text-sm" onClick={e => { e.preventDefault(); deleteTile(tile.id) }}>🗑️</button>
         </div>
@@ -226,6 +227,7 @@ export default function LinkDashboard() {
   const [searchQuery, setSearchQuery] = useState("")
 
   const toggleFavorite = (id) => setTiles(tiles.map(t => t.id === id ? { ...t, favorite: !t.favorite } : t))
+  const updateTileColor = (id, color) => setTiles(tiles.map(t => t.id === id ? { ...t, color } : t))
 
   const filteredTiles = tiles
     .filter(tile => tile.title.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -350,7 +352,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.0</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.1</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -384,27 +386,22 @@ export default function LinkDashboard() {
                 <div className={`absolute right-0 mt-2 w-60 rounded-xl shadow-2xl border overflow-hidden z-50 ${th.panelBg}`}>
                   <div className="p-2 space-y-1">
                     <label className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors cursor-pointer ${th.themeInactiveBg}`} onClick={e => e.stopPropagation()}>
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${showSearch ? 'bg-blue-600 border-blue-600' : 'border-gray-400 bg-transparent'}`} onClick={() => { setShowSearch(!showSearch); if (showSearch) setSearchQuery("") }}>
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${showSearch ? 'bg-blue-600 border-blue-600' : 'border-gray-400 bg-transparent'}`} onClick={() => { setShowSearch(!showSearch); if (showSearch) setSearchQuery(""); setShowSettingsMenu(false) }}>
                         {showSearch && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                       </div>
                       <span>🔍</span> Suchfeld anzeigen
                     </label>
                     <label className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors cursor-pointer ${th.themeInactiveBg}`} onClick={e => e.stopPropagation()}>
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${listView ? 'bg-blue-600 border-blue-600' : 'border-gray-400 bg-transparent'}`} onClick={() => setListView(!listView)}>
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${listView ? 'bg-blue-600 border-blue-600' : 'border-gray-400 bg-transparent'}`} onClick={() => { setListView(!listView); setShowSettingsMenu(false) }}>
                         {listView && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                       </div>
                       <span>📋</span> Listenansicht
                     </label>
 
                     <div className={`my-1 border-t ${th.divider}`} />
-                    <div className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-widest ${th.label}`}>💾 Backup</div>
-                    <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} onClick={exportTiles}>
-                      <span>📤</span> Exportieren
+                    <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} onClick={() => { setShowBackup(true); setShowSettingsMenu(false) }}>
+                      <span>💾</span> Backup
                     </button>
-                    <label className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors cursor-pointer ${th.themeInactiveBg}`}>
-                      <span>📥</span> Importieren
-                      <input type="file" accept=".json" className="hidden" onChange={importTiles} />
-                    </label>
                     <div className={`my-1 border-t ${th.divider}`} />
                     <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} onClick={() => { setShowHelp(true); setShowSettingsMenu(false) }}>
                       <span>❓</span> Anleitung
@@ -500,6 +497,7 @@ export default function LinkDashboard() {
                   setEditingTile={setEditingTile}
                   deleteTile={deleteTile}
                   toggleFavorite={toggleFavorite}
+                  updateTileColor={updateTileColor}
                   th={th}
                 />
               </div>
@@ -602,7 +600,7 @@ export default function LinkDashboard() {
             </div>
           ))}
         </div>
-        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.0 • RHEINISCHE ROST Dashboard</div>
+        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.1 • RHEINISCHE ROST Dashboard</div>
       </div>
     </div>
   )}
