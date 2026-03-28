@@ -14,33 +14,68 @@ const defaultTiles = [
 
 const colorPresets = ["#4285F4","#FF0000","#24292e","#0A66C2","#1DA1F2","#FF4500","#34A853","#7C3AED","#EC4899","#F59E0B","#10B981","#6366F1","#0EA5E9","#D946EF","#84CC16"]
 
+const glassStyle = {
+  dark: {
+    card: "rgba(255,255,255,0.07)",
+    cardBorder: "rgba(255,255,255,0.13)",
+    cardShadow: "0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12)",
+    header: "rgba(10,10,20,0.55)",
+    headerBorder: "rgba(255,255,255,0.10)",
+    modal: "rgba(20,20,35,0.75)",
+    modalBorder: "rgba(255,255,255,0.15)",
+    panel: "rgba(20,20,35,0.70)",
+    panelBorder: "rgba(255,255,255,0.10)",
+    input: "rgba(255,255,255,0.08)",
+    inputBorder: "rgba(255,255,255,0.18)",
+    btn: "rgba(255,255,255,0.08)",
+    btnBorder: "rgba(255,255,255,0.18)",
+    btnHover: "rgba(255,255,255,0.15)",
+  },
+  light: {
+    card: "rgba(255,255,255,0.55)",
+    cardBorder: "rgba(255,255,255,0.80)",
+    cardShadow: "0 8px 32px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.90)",
+    header: "rgba(255,255,255,0.60)",
+    headerBorder: "rgba(255,255,255,0.70)",
+    modal: "rgba(255,255,255,0.75)",
+    modalBorder: "rgba(255,255,255,0.90)",
+    panel: "rgba(255,255,255,0.65)",
+    panelBorder: "rgba(255,255,255,0.80)",
+    input: "rgba(0,0,0,0.06)",
+    inputBorder: "rgba(0,0,0,0.12)",
+    btn: "rgba(0,0,0,0.06)",
+    btnBorder: "rgba(0,0,0,0.12)",
+    btnHover: "rgba(0,0,0,0.10)",
+  }
+}
+
 const themes = {
   dark: {
     bg: "bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950",
-    header: "bg-gray-950 bg-opacity-80 border-gray-800",
-    input: "bg-gray-800 text-white border-gray-700",
-    btn: "bg-gray-800 hover:bg-gray-700 text-gray-300 border-gray-700",
-    footer: "text-gray-600", modal: "bg-gray-900 border-gray-700",
-    label: "text-gray-400", modalInput: "bg-gray-800 text-white border-gray-600",
+    header: "border-b",
+    input: "text-white",
+    btn: "text-gray-300",
+    footer: "text-gray-600", modal: "",
+    label: "text-gray-400", modalInput: "text-white",
     logoText: "#fff", appName: "#e2e8f0", version: "#6b7280",
     divider: "border-gray-600", text: "text-white", subtext: "text-gray-500",
-    panelBg: "bg-gray-900 border-gray-700",
+    panelBg: "",
     themeActiveBg: "bg-blue-600 text-white",
-    themeInactiveBg: "bg-gray-800 hover:bg-gray-700 text-gray-300",
+    themeInactiveBg: "text-gray-300",
     emptyText: "text-gray-500",
   },
   light: {
-    bg: "bg-white",
-    header: "bg-white bg-opacity-90 border-gray-200",
-    input: "bg-gray-100 text-gray-900 border-gray-300",
-    btn: "bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300",
-    footer: "text-gray-400", modal: "bg-white border-gray-200",
-    label: "text-gray-600", modalInput: "bg-gray-100 text-gray-900 border-gray-300",
+    bg: "bg-gradient-to-br from-blue-50 via-white to-purple-50",
+    header: "border-b",
+    input: "text-gray-900",
+    btn: "text-gray-700",
+    footer: "text-gray-400", modal: "",
+    label: "text-gray-600", modalInput: "text-gray-900",
     logoText: "#111", appName: "#1a1a2e", version: "#9ca3af",
     divider: "border-gray-300", text: "text-gray-900", subtext: "text-gray-400",
-    panelBg: "bg-white border-gray-200",
+    panelBg: "",
     themeActiveBg: "bg-blue-600 text-white",
-    themeInactiveBg: "bg-gray-100 hover:bg-gray-200 text-gray-700",
+    themeInactiveBg: "text-gray-700",
     emptyText: "text-gray-400",
   },
 }
@@ -69,7 +104,7 @@ function TileIcon({ icon, isDark }) {
 function TileForm({ tile, setTile, onSave, onCancel, saveLabel, th, allGroups }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" onClick={onCancel}>
-      <div className={`rounded-2xl p-6 w-full max-w-md border shadow-2xl ${th.modal}`} onClick={e => e.stopPropagation()}>
+      <div className={`rounded-2xl p-6 w-full max-w-md shadow-2xl`} style={{ background: gl.modal, backdropFilter: 'blur(32px) saturate(1.8)', WebkitBackdropFilter: 'blur(32px) saturate(1.8)', border: `1px solid ${gl.modalBorder}` }} onClick={e => e.stopPropagation()}>
         <h3 className={`text-xl font-bold mb-5 ${th.text}`}>{saveLabel === "Speichern" ? "Kachel bearbeiten" : "Neue Kachel"}</h3>
         <div className="space-y-4">
           <div>
@@ -83,7 +118,7 @@ function TileForm({ tile, setTile, onSave, onCancel, saveLabel, th, allGroups })
           <div>
             <label className={`block text-sm font-medium mb-1 ${th.label}`}>Icon / Emoji</label>
             <div className="flex gap-2">
-              <input className={`flex-1 rounded-lg px-4 py-2.5 border focus:border-blue-500 focus:outline-none ${th.modalInput}`} value={tile.icon} onChange={e => setTile({ ...tile, icon: e.target.value })} placeholder="🔗" />
+              <input className={`flex-1 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${th.modalInput}`} style={{ background: gl.input, border: `1px solid ${gl.inputBorder}` }} value={tile.icon} onChange={e => setTile({ ...tile, icon: e.target.value })} placeholder="🔗" />
               <button className={`px-3 py-2 rounded-lg text-sm border transition-colors ${th.btn}`} title="Favicon automatisch laden" onClick={() => {
                 try {
                   const url = tile.url.startsWith('http') ? tile.url : 'https://' + tile.url
@@ -138,7 +173,7 @@ function TileForm({ tile, setTile, onSave, onCancel, saveLabel, th, allGroups })
         </div>
         <div className="flex gap-3 mt-6">
           <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition-colors" onClick={onSave}>{saveLabel}</button>
-          <button className={`flex-1 font-medium py-2.5 rounded-lg transition-colors border ${th.btn}`} onClick={onCancel}>Abbrechen</button>
+          <button className={`flex-1 font-medium py-2.5 rounded-xl transition-colors ${th.btn}`} style={{ background: gl.btn, border: `1px solid ${gl.btnBorder}` }} onClick={onCancel}>Abbrechen</button>
         </div>
       </div>
     </div>
@@ -149,7 +184,7 @@ function UrlTooltip({ tile, isDark, th }) {
   const domain = (() => { try { return new URL(tile.url).hostname } catch { return "" } })()
   const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`
   return (
-    <div className={`absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 rounded-xl shadow-2xl border p-3 pointer-events-none ${th.modal}`} style={{ backdropFilter: 'blur(12px)' }}>
+    <div className={`absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 rounded-2xl p-3 pointer-events-none`} style={{ background: gl.modal, backdropFilter: 'blur(24px) saturate(1.8)', WebkitBackdropFilter: 'blur(24px) saturate(1.8)', border: `1px solid ${gl.modalBorder}`, boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}>
       <div className="flex items-center gap-2 mb-1.5">
         <img src={faviconUrl} alt="" className="w-4 h-4 flex-shrink-0" onError={e => e.target.style.display='none'} />
         <span className={`font-semibold text-sm truncate ${th.text}`}>{tile.title}</span>
@@ -191,14 +226,20 @@ function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSetting
       onClick={e => { if (showSettings) e.preventDefault() }}
       onMouseEnter={() => { if (!showSettings && showUrlTooltip) { hoverTimer.current = setTimeout(() => setShowTooltip(true), 500) } }}
       onMouseLeave={() => { clearTimeout(hoverTimer.current); setShowTooltip(false) }}
-      className={`${sizeClasses[tile.size]} relative group rounded-2xl overflow-visible flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-40 scale-95' : ''} ${isDragOver ? 'scale-105 ring-4 ring-blue-400 ring-opacity-80' : ''} ${tile.hidden ? 'opacity-40' : ''}`}
+      className={`${sizeClasses[tile.size]} relative group rounded-2xl overflow-visible flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-40 scale-95' : ''} ${isDragOver ? 'scale-105 ring-2 ring-blue-400 ring-opacity-60' : ''} ${tile.hidden ? 'opacity-40' : ''}`}
       style={{
-        background: isDark ? `linear-gradient(135deg, ${tile.color}, ${tile.color}cc)` : "#ffffff",
-        border: isDark ? `1px solid rgba(255,255,255,0.1)` : `2px solid ${tile.color}`,
-        boxShadow: isDark ? "none" : `0 4px 20px ${tile.color}33`
+        background: isDark
+          ? `linear-gradient(135deg, ${tile.color}77, ${tile.color}33), rgba(255,255,255,0.07)`
+          : `linear-gradient(135deg, ${tile.color}18, ${tile.color}08), rgba(255,255,255,0.70)`,
+        border: `1px solid ${isDark ? tile.color + '66' : tile.color + '55'}`,
+        boxShadow: isDark
+          ? `0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.14), 0 0 0 1px ${tile.color}33`
+          : `0 4px 24px ${tile.color}18, inset 0 1px 0 rgba(255,255,255,0.95)`,
+        backdropFilter: 'blur(16px) saturate(1.6)',
+        WebkitBackdropFilter: 'blur(16px) saturate(1.6)',
       }}
     >
-      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-2xl" />
+      <div className="absolute inset-0 rounded-2xl transition-all" style={{ background: 'rgba(255,255,255,0)', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.08)'} onMouseLeave={e => e.currentTarget.style.background='rgba(255,255,255,0)'} />
       {showTooltip && !showSettings && <UrlTooltip tile={tile} isDark={isDark} th={th} />}
       <TileIcon icon={tile.icon} isDark={isDark} />
       <span className="font-semibold text-sm tracking-wide" style={{ color: isDark ? "#fff" : tile.color }}>{tile.title}</span>
@@ -364,6 +405,7 @@ export default function LinkDashboard() {
   }, [themeMode])
 
   const th = isDark ? themes.dark : themes.light
+  const gl = isDark ? glassStyle.dark : glassStyle.light
 
   const [tiles, setTiles] = useState(() => {
     try {
@@ -554,7 +596,7 @@ export default function LinkDashboard() {
       {easterEgg && <EasterEgg />}
       {showBgModal && <BackgroundModal th={th} onClose={() => setShowBgModal(false)} />}
 
-      <header className={`sticky top-0 z-40 backdrop-blur-xl border-b ${th.header} transition-colors duration-300`}>
+      <header className={`sticky top-0 z-40 ${th.header} transition-colors duration-300`} style={{ background: gl.header, backdropFilter: 'blur(24px) saturate(1.8)', WebkitBackdropFilter: 'blur(24px) saturate(1.8)', borderBottom: `1px solid ${gl.headerBorder}` }}>
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex flex-col leading-none select-none cursor-pointer" onClick={e => { e.stopPropagation(); handleLogoClick() }}>
@@ -563,7 +605,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 3.1</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 3.2</span>
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap justify-end">
@@ -574,14 +616,14 @@ export default function LinkDashboard() {
               </div>
             )}
             <button
-              className={`p-2.5 rounded-xl transition-colors border text-sm font-medium ${sortMode !== 'manual' ? 'bg-blue-600 border-blue-600 text-white' : th.btn}`}
+              className={`p-2.5 rounded-xl transition-colors text-sm font-medium ${sortMode !== 'manual' ? 'bg-blue-600 text-white' : th.btn}`} style={sortMode === 'manual' ? { background: gl.btn, border: `1px solid ${gl.btnBorder}`, backdropFilter: 'blur(8px)' } : {}}
               title="Sortierung wechseln"
               onClick={e => { e.stopPropagation(); const modes = ['manual','name','group','color']; setSortMode(modes[(modes.indexOf(sortMode)+1)%modes.length]) }}
             >
               {sortMode === 'manual' ? '⇅' : sortMode === 'name' ? 'A–Z' : sortMode === 'group' ? '🗂' : '🎨'}
             </button>
             {showFullscreenBtn && (
-              <button className={`px-4 py-2.5 rounded-xl transition-colors border text-sm font-medium ${isFullscreen ? 'bg-blue-600 border-blue-600 text-white' : th.btn}`} onClick={e => { e.stopPropagation(); toggleFullscreen() }}>
+              <button className={`px-4 py-2.5 rounded-xl transition-colors text-sm font-medium ${isFullscreen ? 'bg-blue-600 text-white' : th.btn}`} style={!isFullscreen ? { background: gl.btn, border: `1px solid ${gl.btnBorder}`, backdropFilter: 'blur(8px)' } : {}} onClick={e => { e.stopPropagation(); toggleFullscreen() }}>
                 {isFullscreen ? 'Vollbild ✕' : 'Vollbild'}
               </button>
             )}
@@ -592,10 +634,10 @@ export default function LinkDashboard() {
             <div className="relative" onClick={e => e.stopPropagation()}>
               <button className={`p-2.5 rounded-xl transition-colors border ${th.btn}`} onClick={() => { setShowThemeMenu(!showThemeMenu); setShowSettingsMenu(false) }}><ThemeIcon /></button>
               {showThemeMenu && (
-                <div className={`absolute right-0 mt-2 w-44 rounded-xl shadow-2xl border overflow-hidden z-50 ${th.panelBg}`}>
+                <div className={`absolute right-0 mt-2 w-44 rounded-2xl overflow-hidden z-50`} style={{ background: gl.panel, backdropFilter: 'blur(24px) saturate(1.8)', WebkitBackdropFilter: 'blur(24px) saturate(1.8)', border: `1px solid ${gl.panelBorder}`, boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}>
                   <div className="p-2 space-y-1">
                     {[{val:"auto",label:"Automatisch",icon:"🖥️"},{val:"dark",label:"Dunkel",icon:"🌙"},{val:"light",label:"Hell",icon:"☀️"}].map(opt => (
-                      <button key={opt.val} className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${themeMode === opt.val ? th.themeActiveBg : th.themeInactiveBg}`} onClick={() => { setThemeMode(opt.val); setShowThemeMenu(false) }}>
+                      <button key={opt.val} className={`w-full text-left px-3 py-2 rounded-xl text-sm flex items-center gap-2 transition-colors ${themeMode === opt.val ? th.themeActiveBg : th.themeInactiveBg}`} style={themeMode !== opt.val ? { background: 'transparent' } : {}} onClick={() => { setThemeMode(opt.val); setShowThemeMenu(false) }}>
                         <span>{opt.icon}</span> {opt.label}
                       </button>
                     ))}
@@ -606,7 +648,7 @@ export default function LinkDashboard() {
             <div className="relative" onClick={e => e.stopPropagation()}>
               <button className={`p-2.5 rounded-xl transition-colors border ${th.btn}`} onClick={() => { setShowSettingsMenu(!showSettingsMenu); setShowThemeMenu(false) }}>⚙️</button>
               {showSettingsMenu && (
-                <div className={`absolute right-0 mt-2 w-60 rounded-xl shadow-2xl border overflow-hidden z-50 ${th.panelBg}`}>
+                <div className={`absolute right-0 mt-2 w-60 rounded-2xl overflow-hidden z-50`} style={{ background: gl.panel, backdropFilter: 'blur(24px) saturate(1.8)', WebkitBackdropFilter: 'blur(24px) saturate(1.8)', border: `1px solid ${gl.panelBorder}`, boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}>
                   <div className="p-2 space-y-1">
                     {[
                       { label: "Suchfeld anzeigen", icon: "🔍", val: showSearch, set: () => { setShowSearch(v => !v); setShowSettingsMenu(false) } },
@@ -624,13 +666,13 @@ export default function LinkDashboard() {
                       </label>
                     ))}
                     <div className={`my-1 border-t ${th.divider}`} />
-                    <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} onClick={() => { setShowBgModal(true); setShowSettingsMenu(false) }}>🎨 Hintergrund</button>
+                    <button className={`w-full text-left px-3 py-2 rounded-xl text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} style={{ background: 'transparent' }} onClick={() => { setShowBgModal(true); setShowSettingsMenu(false) }}>🎨 Hintergrund</button>
                     <div className={`my-1 border-t ${th.divider}`} />
-                    <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} onClick={() => { setShowBackup(true); setShowSettingsMenu(false) }}>💾 Backup</button>
+                    <button className={`w-full text-left px-3 py-2 rounded-xl text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} style={{ background: 'transparent' }} onClick={() => { setShowBackup(true); setShowSettingsMenu(false) }}>💾 Backup</button>
                     <div className={`my-1 border-t ${th.divider}`} />
-                    <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} onClick={() => { setShowHelp(true); setShowSettingsMenu(false) }}>❓ Anleitung</button>
+                    <button className={`w-full text-left px-3 py-2 rounded-xl text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} style={{ background: 'transparent' }} onClick={() => { setShowHelp(true); setShowSettingsMenu(false) }}>❓ Anleitung</button>
                     <div className={`my-1 border-t ${th.divider}`} />
-                    <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} onClick={() => { setShowWartung(true); setShowSettingsMenu(false) }}>🛠️ Wartung</button>
+                    <button className={`w-full text-left px-3 py-2 rounded-xl text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} style={{ background: 'transparent' }} onClick={() => { setShowWartung(true); setShowSettingsMenu(false) }}>🛠️ Wartung</button>
                   </div>
                 </div>
               )}
@@ -660,7 +702,7 @@ export default function LinkDashboard() {
             {groupedTiles.map(({ group, tiles: gTiles }) => (
               <div key={group}>
                 {group && <div className="flex items-center gap-3 mb-2"><span className={`text-xs font-bold uppercase tracking-widest ${th.label}`}>{group}</span><div className={`flex-1 h-px border-t ${th.divider}`} /></div>}
-                <div className={`rounded-2xl border overflow-hidden ${th.panelBg}`}>
+                <div className={`rounded-2xl overflow-hidden`} style={{ background: gl.panel, border: `1px solid ${gl.panelBorder}`, backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
                   {gTiles.map((tile, idx) => (
                     <a key={tile.id} href={showSettings ? undefined : tile.url} target={tile.newTab ? "_blank" : "_self"} rel="noopener noreferrer" onClick={e => { if (showSettings) e.preventDefault() }}
                       className={`flex items-center gap-4 px-4 py-3 transition-colors hover:bg-blue-400 hover:bg-opacity-10 ${idx !== 0 ? `border-t ${th.divider}` : ''} ${tile.hidden ? 'opacity-40' : ''}`}>
@@ -668,8 +710,8 @@ export default function LinkDashboard() {
                         {tile.icon && tile.icon.startsWith('https://') ? <img src={tile.icon} alt="icon" style={{ width: 24, height: 24, objectFit: 'contain' }} /> : tile.icon === 'ariba' ? <span style={{ fontSize: 11, fontWeight: 700, color: '#fff' }}>ariba</span> : tile.icon === 'jira' ? <span style={{ color: '#fff', fontSize: 16 }}>J</span> : <span style={{ fontSize: 20 }}>{tile.icon}</span>}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className={`font-medium text-sm flex items-center gap-1 ${th.text}`}>{tile.favorite && <span className="text-xs">⭐</span>}{tile.title}{tile.newTab && <span className="text-xs opacity-40">↗</span>}</div>
-                        <div className={`text-xs truncate ${th.subtext}`}>{tile.url.replace(/https?:\/\//, '').replace(/\/$/, '')}</div>
+                        <div className={`font-medium text-sm flex items-center gap-1`} style={{ color: isDark ? '#fff' : '#111' }}>{tile.favorite && <span className="text-xs">⭐</span>}{tile.title}{tile.newTab && <span className="text-xs opacity-40">↗</span>}</div>
+                        <div className={`text-xs truncate`} style={{ color: isDark ? 'rgba(255,255,255,0.5)' : '#555' }}>{tile.url.replace(/https?:\/\//, '').replace(/\/$/, '')}</div>
                       </div>
                       {showSettings && (
                         <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -728,13 +770,13 @@ export default function LinkDashboard() {
 
       {confirmDeleteId && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" onClick={() => setConfirmDeleteId(null)}>
-          <div className={`rounded-2xl p-6 w-full max-w-sm border shadow-2xl ${th.modal}`} onClick={e => e.stopPropagation()}>
+          <div className={`rounded-2xl p-6 w-full max-w-sm shadow-2xl`} style={{ background: gl.modal, backdropFilter: 'blur(32px) saturate(1.8)', WebkitBackdropFilter: 'blur(32px) saturate(1.8)', border: `1px solid ${gl.modalBorder}` }} onClick={e => e.stopPropagation()}>
             <p className="text-4xl text-center mb-3">🗑️</p>
             <h3 className={`text-lg font-bold text-center mb-2 ${th.text}`}>Kachel löschen?</h3>
             <p className={`text-sm text-center mb-6 ${th.label}`}>"{tiles.find(t => t.id === confirmDeleteId)?.title}" wird unwiderruflich gelöscht.</p>
             <div className="flex gap-3">
               <button className="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 rounded-lg" onClick={confirmDelete}>Löschen</button>
-              <button className={`flex-1 font-medium py-2.5 rounded-lg border ${th.btn}`} onClick={() => setConfirmDeleteId(null)}>Abbrechen</button>
+              <button className={`flex-1 font-medium py-2.5 rounded-xl ${th.btn}`} style={{ background: gl.btn, border: `1px solid ${gl.btnBorder}` }} onClick={() => setConfirmDeleteId(null)}>Abbrechen</button>
             </div>
           </div>
         </div>
@@ -742,7 +784,7 @@ export default function LinkDashboard() {
 
       {showHelp && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" onClick={() => setShowHelp(false)}>
-          <div className={`rounded-2xl w-full max-w-lg border shadow-2xl overflow-hidden ${th.modal}`} onClick={e => e.stopPropagation()}>
+          <div className={`rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden`} style={{ background: gl.modal, backdropFilter: 'blur(32px) saturate(1.8)', WebkitBackdropFilter: 'blur(32px) saturate(1.8)', border: `1px solid ${gl.modalBorder}` }} onClick={e => e.stopPropagation()}>
             <div className={`flex items-center justify-between px-6 py-4 border-b ${th.divider}`}>
               <h3 className={`text-lg font-bold ${th.text}`}>❓ Anleitung</h3>
               <button className={`p-1.5 rounded-lg border ${th.btn}`} onClick={() => setShowHelp(false)}>✕</button>
@@ -806,7 +848,7 @@ export default function LinkDashboard() {
       )}
 
       <footer className={`text-center py-6 text-xs ${th.footer}`}>
-        Rheinische Post Mediengruppe · Dashboard v2.9
+         · Dashboard v2.9
       </footer>
     </div>
   )
