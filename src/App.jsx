@@ -407,8 +407,7 @@ export default function LinkDashboard() {
   const [removingId, setRemovingId] = useState(null)
   const [addingId, setAddingId] = useState(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState(null)
-  const [showHelp, setShowHelp] = useState(false)
-  const [showBackup, setShowBackup] = useState(false)
+    const [showBackup, setShowBackup] = useState(false)
   const [showWartung, setShowWartung] = useState(false)
   const [logoClickCount, setLogoClickCount] = useState(0)
   const [easterEgg, setEasterEgg] = useState(false)
@@ -511,26 +510,7 @@ export default function LinkDashboard() {
     return <span>☀️</span>
   }
 
-  const helpItems = [
-    { icon: '➕', title: 'Kachel hinzufügen', text: 'Klicke oben rechts auf "+ Neue Kachel". Gib Titel, URL, Icon und Farbe ein und bestätige mit "Hinzufügen".' },
-    { icon: '✏️', title: 'Kachel bearbeiten', text: 'Aktiviere den Bearbeitungsmodus über das ✏️-Symbol. Dann erscheint auf jeder Kachel ein Bearbeitungsoverlay.' },
-    { icon: '🗑️', title: 'Kachel löschen', text: 'Im Bearbeitungsmodus auf 🗑️ klicken. Es erscheint eine Sicherheitsabfrage.' },
-    { icon: '↕️', title: 'Drag & Drop', text: 'Im Bearbeitungsmodus kannst du Kacheln per Drag & Drop verschieben.' },
-    { icon: '⭐', title: 'Favoriten', text: 'Im Bearbeitungsmodus auf ⭐ klicken. Favoriten erscheinen bei manueller Sortierung ganz oben.' },
-    { icon: '🔍', title: 'Suchfeld', text: 'Das Suchfeld kann über ⚙️ → "Suchfeld anzeigen" ein- oder ausgeblendet werden.' },
-    { icon: '📋', title: 'Listenansicht', text: 'Über ⚙️ → "Listenansicht" zwischen Kachel- und kompakter Listenansicht wechseln.' },
-    { icon: '🗂️', title: 'Gruppen anzeigen', text: 'Über ⚙️ → "Gruppen anzeigen" werden Kacheln nach Gruppen mit Trennlinien gegliedert.' },
-    { icon: '👁️', title: 'Kacheln ausblenden', text: 'Im Bearbeitungsmodus auf 👁️ klicken um eine Kachel auszublenden. Über ⚙️ → "Versteckte anzeigen" wieder sichtbar machen.' },
-    { icon: '⛶', title: 'Vollbild-Modus', text: 'Über ⚙️ → "Vollbild-Button" aktivieren. Dann erscheint ein Vollbild-Button im Header. ESC beendet den Vollbildmodus.' },
-    { icon: '⇅', title: 'Sortierung', text: 'Über den Sortier-Button im Header zwischen manuell, A–Z, Gruppe und Farbe wechseln.' },
-    { icon: '🎨', title: 'Hintergrund anpassen', text: 'Über ⚙️ → "🎨 Hintergrund" kannst du einen Farbverlauf oder ein eigenes Hintergrundbild per URL festlegen.' },
-    { icon: '🔎', title: 'URL-Vorschau', text: 'Über ⚙️ → "URL-Vorschau beim Hover" aktivieren. Beim Hovern über eine Kachel erscheint ein Tooltip mit URL und Favicon.' },
-    { icon: '🌐', title: 'Favicon als Icon', text: 'Im Kachel-Formular auf "🌐 Favicon" klicken, um das Logo der Website automatisch zu laden.' },
-    { icon: '💾', title: 'Backup', text: 'Über ⚙️ → "Backup" kannst du alle Kacheln als JSON exportieren und auf einem anderen Gerät importieren.' },
-    { icon: '🌙', title: 'Theme wechseln', text: 'Über den 🌙-Button zwischen Dunkel, Hell und Automatisch wechseln.' },
-    { icon: '⧉', title: 'Kachel duplizieren', text: 'Im Bearbeitungsmodus auf ⧉ klicken, um eine Kachel zu kopieren. Die Kopie erscheint direkt daneben.' },
-    { icon: '🛠️', title: 'Wartung / Zurücksetzen', text: 'Über ⚙️ → "Wartung" können alle Kacheln auf den Standard zurückgesetzt werden.' },
-  ]
+
 
   const hasBgStyle = Object.keys(bgStyle).length > 0
 
@@ -558,7 +538,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l flex flex-col justify-center`} style={{ borderColor: `${RP_YELLOW}55` }}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 3.4</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 3.5</span>
             </div>
           </div>
 
@@ -634,8 +614,7 @@ export default function LinkDashboard() {
                     <button className="w-full text-left px-3 py-2 rounded-xl text-sm flex items-center gap-2 transition-colors" style={{ color: isDark ? '#e5e7eb' : '#1a1a1a' }} onClick={() => { setShowBgModal(true); setShowSettingsMenu(false) }}>🎨 Hintergrund</button>
                     <div className="my-1 border-t" style={{ borderColor: `${RP_YELLOW}33` }} />
                     <button className="w-full text-left px-3 py-2 rounded-xl text-sm flex items-center gap-2 transition-colors" style={{ color: isDark ? '#e5e7eb' : '#1a1a1a' }} onClick={() => { setShowBackup(true); setShowSettingsMenu(false) }}>💾 Backup</button>
-                    <div className="my-1 border-t" style={{ borderColor: `${RP_YELLOW}33` }} />
-                    <button className="w-full text-left px-3 py-2 rounded-xl text-sm flex items-center gap-2 transition-colors" style={{ color: isDark ? '#e5e7eb' : '#1a1a1a' }} onClick={() => { setShowHelp(true); setShowSettingsMenu(false) }}>❓ Anleitung</button>
+
                     <div className="my-1 border-t" style={{ borderColor: `${RP_YELLOW}33` }} />
                     <button className="w-full text-left px-3 py-2 rounded-xl text-sm flex items-center gap-2 transition-colors" style={{ color: isDark ? '#e5e7eb' : '#1a1a1a' }} onClick={() => { setShowWartung(true); setShowSettingsMenu(false) }}>🛠️ Wartung</button>
                   </div>
@@ -726,7 +705,7 @@ export default function LinkDashboard() {
         </div>
       )}
 
-      {showHelp && (
+      {false && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" onClick={() => setShowHelp(false)}>
           <div className="rounded-2xl p-6 w-full max-w-sm shadow-2xl overflow-y-auto" style={{ maxHeight: '70vh' }} style={{ background: gl.modal, backdropFilter: 'blur(32px)', WebkitBackdropFilter: 'blur(32px)', border: `1px solid ${gl.modalBorder}` }} onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
