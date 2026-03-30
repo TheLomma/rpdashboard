@@ -728,7 +728,7 @@ export default function LinkDashboard() {
 
       {showHelp && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" onClick={() => setShowHelp(false)}>
-          <div className="rounded-2xl p-6 w-full max-w-lg shadow-2xl overflow-y-auto" style={{ maxHeight: '85vh' }} style={{ background: gl.modal, backdropFilter: 'blur(32px)', WebkitBackdropFilter: 'blur(32px)', border: `1px solid ${gl.modalBorder}` }} onClick={e => e.stopPropagation()}>
+          <div className="rounded-2xl p-6 w-full max-w-sm shadow-2xl overflow-y-auto" style={{ maxHeight: '70vh' }} style={{ background: gl.modal, backdropFilter: 'blur(32px)', WebkitBackdropFilter: 'blur(32px)', border: `1px solid ${gl.modalBorder}` }} onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <h3 className={`text-lg font-bold ${th.text}`}>❓ Anleitung</h3>
               <button className={`p-1.5 rounded-lg ${th.btn}`} style={{ background: gl.btn, border: `1px solid ${gl.btnBorder}` }} onClick={() => setShowHelp(false)}>✕</button>
